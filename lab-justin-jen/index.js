@@ -3,10 +3,11 @@
 // input-file-path output-file-path transfrom-name
 const fs = require('fs');
 const smoosh = require('./lib/smoosh.js');
+const colorChange = require('./lib/colorChange.js');
 
 const inputFile = process.argv[2];
 const outputFile = process.argv[3];
-const transormation = process.argv[4];
+const transformation = process.argv[4];
 
 const parsedBitMap = {};
 
@@ -14,9 +15,13 @@ const parsedBitMap = {};
 const buffer = fs.readFile(inputFile, (err, data) => {
   if(err) {throw err}
 
-  if (transormation === 'smoosh') {
+  if (transformation === 'smoosh') {
     smoosh(data, writeFile);
+  } else if (transformation === 'colorChange') {
+    colorChange(data, writeFile);
   }
+  
+  // parseBitMap(data);
 });
 
 // parse binary data
@@ -38,6 +43,8 @@ function parseBitMap(data) {
   parsedBitMap.numColors = data.readInt32LE(NUM_COLORS_OFFSET);
   let COLOR_TABLE_SIZE = parsedBitMap.numColors * 4;
   parsedBitMap.colorTable = data.slice(COLOR_TABLE_OFFSET, COLOR_TABLE_SIZE);
+
+  console.log(parsedBitMap.colorTable);
 }
 // define tranformations
 
